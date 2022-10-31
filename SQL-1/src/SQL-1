@@ -1,0 +1,127 @@
+//*1, 2
+CREATE TABLE persons (
+	Id int IDENTITY(1,1),
+	FirstName varchar(255)
+)
+INSERT INTO persons (FirstName) VALUES ('Vasya');
+INSERT INTO persons (FirstName) VALUES ('Petya');
+SELECT * FROM persons;
+
+//*3
+ALTER TABLE persons ADD edit-ado DATETIME NULL AFTER firstname;
+UPDATE persons SET edit-ado = '1900-01-01 00:00:00';
+ALTER TABLE persons MODIFY edit-ado DATETIME NOT NULL;
+SELECT * FROM persons;
+
+CREATE TABLE test_51 (
+    Id int IDENTITY(1,1),
+	PersonId int DEFAULT NULL,
+	Amount int DEFAULT NULL
+);
+INSERT INTO test_51 (PersonId, Amount) VALUES (1, 1000);
+INSERT INTO test_51 (PersonId, Amount) VALUES (1, 2000);
+INSERT INTO test_51 (PersonId, Amount) VALUES (1, NULL);
+INSERT INTO test_51 (PersonId, Amount) VALUES (2, 2000);
+SELECT * FROM test_51;
+
+CREATE TABLE test_52 (
+    Id int IDENTITY(1,1),
+	PersonId int DEFAULT NULL,
+	Amount int DEFAULT NULL
+);
+INSERT INTO test_52 (PersonId, Amount) VALUES (1, NULL);
+INSERT INTO test_52 (PersonId, Amount) VALUES (1, 2000);
+INSERT INTO test_52 (PersonId, Amount) VALUES (2, 1000);
+INSERT INTO test_52 (PersonId, Amount) VALUES (2, NULL);
+SELECT * FROM test_52;
+
+SELECT *
+FROM persons
+JOIN test_51 on test_51.PersonId=persons.id
+JOIN test_52 on test_52.PersonId=persons.id
+WHERE (
+	test_51.Amount IS NULL
+	OR test_52.Amount IS NULL
+) AND NOT (
+	test_51.Amount IS NULL
+	AND test_52.Amount IS NULL
+)
+
+SELECT PersonId, Amount FROM test_51
+WHERE Amount IS NULL
+INTERSECT
+SELECT PersonId, Amount FROM test_52
+WHERE Amount IS NULL;
+
+//*7
+SELECT *
+FROM persons
+JOIN test_51 on test_51.PersonId=persons.id
+JOIN test_52 on test_52.PersonId=persons.id
+WHERE (
+	test_51.Amount IS NULL
+	AND test_52.Amount IS NOT NULL
+) OR (
+	test_51.Amount IS NOT NULL
+	AND test_52.Amount IS NULL
+)
+ORDER BY PersonId;
+
+//*8
+SELECT Amount, COUNT(Amount)
+FROM test_51
+GROUP BY Amount
+HAVING COUNT(Amount)>1;
+
+SELECT distinct Amount FROM test_52;
+SELECT distinct Amount FROM test_51;
+
+SELECT FirstName,
+CONVERT (char, Id) AS PositionChar
+FROM persons
+
+SELECT FirstName,
+CAST (Id AS sql_variant) AS IdNumeric,
+CAST(Name AS text) AS NameText
+FROM [dbo].[persons]
+
+SELECT * from test_51
+WHERE Id=1;
+SELECT * from test_51
+WHERE Id='1';
+
+ALTER TABLE persons
+ADD LastName varchar(255);
+
+SELECT * FROM persons;
+
+INSERT INTO persons (FirstName, LastName)
+VALUES ('Alesia', 'Alexandrovna');
+INSERT INTO persons (FirstName, LastName)
+VALUES ('Alexandra', 'Alesyavna');
+
+SELECT * FROM persons;
+
+UPDATE persons
+SET FirstName='Barbara'
+WHERE id=1;
+
+SELECT * FROM persons;
+
+//*4
+DELETE FROM persons
+WHERE Id=1;
+
+SELECT * FROM persons;
+
+//*5
+TRUNCATE TABLE persons;
+
+SELECT * FROM persons;
+
+DROP TABLE persons;
+
+
+
+
+
